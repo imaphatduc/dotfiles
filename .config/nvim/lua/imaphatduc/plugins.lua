@@ -1,25 +1,35 @@
-local ensure_packer = function()
-    local fn = vim.fn
-    local install_path = fn.stdpath('config')..'/site/pack/packer/start/packer.nvim'
-    if fn.empty(fn.glob(install_path)) > 0 then
-        fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
-        vim.cmd [[packadd packer.nvim]]
-        return true
-    end
-    return false
+local status, packer = pcall(require, "packer")
+if not status then
+	print("Packer is not installed")
+	return
 end
 
-local packer_bootstrap = ensure_packer()
+-- reloads Neovim after whenever you save plugins.lua
+vim.cmd([[
+    augroup packer_user_config
+      autocmd!
+     autocmd BufWritePost plugins.lua source <afile> | PackerSync
+  augroup END
+]])
 
 return require('packer').startup(
-    function(use)
+    function (use)
         use('wbthomason/packer.nvim')
 
         -- use('dense-analysis/ale')
 
-        use('preservim/nerdtree')
-
-        use('tiagofumo/vim-nerdtree-syntax-highlight')
+        use {
+            "nvim-neo-tree/neo-tree.nvim",
+            branch = "v2.x",
+            requires = {
+                "nvim-lua/plenary.nvim",
+                "kyazdani42/nvim-web-devicons", -- not strictly required, but recommended
+                "MunifTanjim/nui.nvim",
+            },
+            config = function ()
+                require('imaphatduc.plugins.neotree')
+            end
+        }
 
         -- use('Brettm12345/moonlight.vim')
 
@@ -56,7 +66,7 @@ return require('packer').startup(
         use({
             'iamcco/markdown-preview.nvim',
             run = 'cd app && yarn install',
-            setup = function()
+            setup = function ()
                 vim.g.mkdp_filetypes = { "markdown" }
             end,
             ft = { "markdown" },
@@ -115,7 +125,7 @@ return require('packer').startup(
         -- use('luochen1990/rainbow')
 
         if packer_bootstrap then
-            require('packer').sync()
+            packer.sync()
         end
     end
 )
