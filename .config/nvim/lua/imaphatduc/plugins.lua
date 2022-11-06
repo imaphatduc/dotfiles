@@ -96,6 +96,9 @@ return require('packer').startup(
         use({
             'nvim-treesitter/nvim-treesitter',
             run = ':TSUpdate',
+            config = function ()
+                require('imaphatduc.plugins.nvim-treesitter')
+            end
         })
 
         use({

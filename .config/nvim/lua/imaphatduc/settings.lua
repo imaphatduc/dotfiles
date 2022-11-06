@@ -2,7 +2,7 @@ local g = vim.g
 local o = vim.o
 
 vim.cmd('syntax on')
-vim.cmd('colorscheme tokyonight')
+vim.cmd('colorscheme tokyonight-night')
 
 vim.api.nvim_command('filetype plugin indent on')
 
